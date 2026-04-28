@@ -3,6 +3,7 @@ import pytest
 import logging
 from src.renderers.svg_renderer import SVGRenderer
 from src.parsers.schematic_parser import SchematicParser
+from src.ltspice_to_svg import get_ltspice_lib_path
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -11,8 +12,11 @@ logger = logging.getLogger(__name__)
 @pytest.fixture(autouse=True)
 def setup_ltspice_lib():
     """Set up the LTspice library path environment variable."""
-    os.environ['LTSPICE_LIB_PATH'] = f"/Users/{os.getenv('USER')}/Library/Application Support/LTspice/lib/sym"
-
+    try:
+        os.environ['LTSPICE_LIB_PATH'] = get_ltspice_lib_path()
+    except OSError:
+        pass
+    
 @pytest.fixture
 def test_schematic():
     """Get the path to the test schematic file."""
