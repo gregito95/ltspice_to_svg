@@ -33,7 +33,7 @@ class ASCParser:
         print(f"Parsing schematic: {self.file_path}")
         
         # Try different encodings in order of likelihood
-        encodings = ['utf-8', 'utf-16le', 'ascii', 'latin1']
+        encodings = ['ansi','utf-16le', 'utf-8', 'ascii', 'latin1']
         lines = None
         last_error = None
         
