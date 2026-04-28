@@ -18,14 +18,14 @@ from src.renderers.svg_renderer import SVGRenderer
 from src.renderers.rendering_config import RenderingConfig
 
 # Version information
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 def get_ltspice_lib_path() -> str:
     """
     Find the LTspice library path based on the operating system.
     
     Attempts to locate the default LTspice symbol library directory based on
-    the current operating system and user. Currently supports Windows and macOS.
+    the current operating system and user by checking multiple common paths.
     
     Returns:
         str: Path to the LTspice symbol library directory
@@ -38,11 +38,26 @@ def get_ltspice_lib_path() -> str:
     
     if system == 'Darwin':  # macOS
         return f"/Users/{username}/Library/Application Support/LTspice/lib/sym"
+    
     elif system == 'Windows':
-        return f"C:\\Users\\{username}\\AppData\\Local\\LTspice\\lib\\sym"
+        # List of all standard locations LTspice might hide its libraries
+        possible_paths = [
+            f"C:\\Users\\{username}\\AppData\\Local\\LTspice\\lib\\sym", # LTspice 24/26 default
+            f"C:\\Users\\{username}\\Documents\\LTspiceXVII\\lib\\sym",  # LTspice XVII default
+            f"C:\\Program Files\\LTC\\LTspiceIV\\lib\\sym"               # Legacy LTspice IV
+        ]
+        
+        # Return the first path that actually exists on this computer
+        for path in possible_paths:
+            if os.path.exists(path):
+                return path
+                
+        # If somehow none exist, fallback to the newest default
+        return possible_paths[0]
+        
     else:
         raise OSError(f"Unsupported operating system: {system}")
-
+        
 def create_config_from_args(args):
     """
     Create a RenderingConfig object from command-line arguments.
