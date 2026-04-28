@@ -16,7 +16,7 @@ if "src.renderers.flag_definitions" not in packages:
 
 setup(
     name="ltspice_to_svg",
-    version="0.2.0",
+    version="0.2.1",
     packages=packages,
     package_data={
         "src": ["renderers/flag_definitions/flags.json"],
